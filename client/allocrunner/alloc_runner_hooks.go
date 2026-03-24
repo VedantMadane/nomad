@@ -131,7 +131,6 @@ func (ar *allocRunner) initRunnerHooks(config *clientconfig.Config) error {
 			providerNamespace: alloc.ServiceProviderNamespace(),
 			serviceRegWrapper: ar.serviceRegWrapper,
 			hookResources:     ar.hookResources,
-			restarter:         ar,
 			networkStatus:     ar,
 			logger:            hookLogger,
 			shutdownDelayCtx:  ar.shutdownDelayCtx,
