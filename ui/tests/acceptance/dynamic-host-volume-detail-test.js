@@ -13,7 +13,6 @@ import moment from 'moment';
 import { formatBytes, formatHertz } from 'nomad-ui/utils/units';
 import VolumeDetail from 'nomad-ui/tests/pages/storage/dynamic-host-volumes/detail';
 import Layout from 'nomad-ui/tests/pages/layout';
-import percySnapshot from '@percy/ember';
 import faker from 'nomad-ui/mirage/faker';
 
 const assignAlloc = (volume, alloc) => {
@@ -74,7 +73,7 @@ module('Acceptance | dynamic host volume detail', function (hooks) {
 
   test('/storage/volumes/:id should list all allocations the volume is attached to', async function (assert) {
     // Use fixed timestamps so both absolute dates and relative times are
-    // deterministic across Percy snapshot runs.
+    // deterministic across test runs.
     const pinned = new Date('2025-06-15T12:00:00Z');
     const pinnedNs = pinned.getTime() * 1e6; // nanoseconds
 
@@ -95,7 +94,7 @@ module('Acceptance | dynamic host volume detail', function (hooks) {
     allocations.forEach((alloc) => assignAlloc(volume, alloc));
 
     // Freeze moment's time reference so relative times ("9 hours ago") are
-    // deterministic across Percy snapshot runs.
+    // deterministic across test runs.
     const originalMomentNow = moment.now;
     moment.now = () => pinned.getTime();
 
@@ -112,7 +111,6 @@ module('Acceptance | dynamic host volume detail', function (hooks) {
             VolumeDetail.allocations.objectAt(idx).id
           );
         });
-      await percySnapshot(assert);
     } finally {
       moment.now = originalMomentNow;
     }

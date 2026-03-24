@@ -15,7 +15,6 @@ import {
 import { setupApplicationTest } from 'ember-qunit';
 import { allScenarios } from '../../mirage/scenarios/default';
 import { setupMirage } from 'ember-cli-mirage/test-support';
-import percySnapshot from '@percy/ember';
 import faker from 'nomad-ui/mirage/faker';
 import a11yAudit from 'nomad-ui/tests/helpers/a11y-audit';
 
@@ -38,7 +37,6 @@ module('Acceptance | namespaces', function (hooks) {
       .dom('[data-test-namespace-row]')
       .exists({ count: server.db.namespaces.length });
     await a11yAudit(assert);
-    await percySnapshot(assert);
     // Reset Token
     window.localStorage.nomadTokenSecret = null;
   });
@@ -83,7 +81,6 @@ module('Acceptance | namespaces', function (hooks) {
     assert.ok(newNs, 'Namespace is in the list');
     await click(newNs);
     assert.equal(currentURL(), '/administration/namespaces/My-New-Namespace');
-    await percySnapshot(assert);
     // Reset Token
     window.localStorage.nomadTokenSecret = null;
   });

@@ -18,7 +18,6 @@ import { setupMirage } from 'ember-cli-mirage/test-support';
 import a11yAudit from 'nomad-ui/tests/helpers/a11y-audit';
 import pageSizeSelect from './behaviors/page-size-select';
 import JobsList from 'nomad-ui/tests/pages/jobs/list';
-import percySnapshot from '@percy/ember';
 import faker from 'nomad-ui/mirage/faker';
 
 let managementToken, clientToken;
@@ -57,8 +56,6 @@ module('Acceptance | jobs list', function (hooks) {
     server.createList('job', jobsCount, { createAllocations: true });
 
     await JobsList.visit();
-
-    await percySnapshot(assert);
 
     const sortedJobs = server.db.jobs
       .sortBy('id')
@@ -144,8 +141,6 @@ module('Acceptance | jobs list', function (hooks) {
   test('when there are no jobs, there is an empty message', async function (assert) {
     faker.seed(1);
     await JobsList.visit();
-
-    await percySnapshot(assert);
 
     assert.ok(JobsList.isEmpty, 'There is an empty message');
     assert.equal(
@@ -245,7 +240,6 @@ module('Acceptance | jobs list', function (hooks) {
 
     await JobsList.visit();
     assert.equal(JobsList.error.title, 'Not Authorized');
-    await percySnapshot(assert);
 
     await JobsList.error.seekHelp();
     assert.equal(currentURL(), '/settings/tokens');
@@ -284,8 +278,6 @@ module('Acceptance | jobs list', function (hooks) {
     assert
       .dom('.flash-message.alert-critical')
       .exists('A toast error message pops up.');
-
-    await percySnapshot(assert);
 
     await click('[data-test-pause-fetching]');
     assert
@@ -600,7 +592,6 @@ module('Acceptance | jobs list', function (hooks) {
         .exists({ count: 10 }, 'All children are shown');
     }, duelingQueryUpdateTime);
 
-    await percySnapshot(assert);
     localStorage.removeItem('nomadPageSize');
   });
 
@@ -753,8 +744,6 @@ module('Acceptance | jobs list', function (hooks) {
     assert
       .dom('[data-test-job-row="ancient-system-job"] [data-test-job-status]')
       .hasText('Failed', 'System job with no allocs is failed');
-
-    await percySnapshot(assert);
   });
 
   test('Jobs with schedule blocks indicate when a task is paused', async function (assert) {
@@ -797,12 +786,10 @@ module('Acceptance | jobs list', function (hooks) {
     assert
       .dom('[data-test-paused-task-indicator]')
       .exists({ count: 1 }, 'Paused task indicator is shown');
-    await percySnapshot(assert);
     await click('[data-test-job-row="time-based-job"]');
     await click(`[data-test-allocation="${allocID}"]`);
     await click(`[data-test-task-row="${task.name}"]`);
     assert.dom('.time-based-alert').exists();
-    await percySnapshot('Task detail with time-based alert');
   });
 
   module('Pagination', function () {
@@ -813,7 +800,6 @@ module('Acceptance | jobs list', function (hooks) {
         assert.dom('[data-test-pager="previous"]').doesNotExist();
         assert.dom('[data-test-pager="next"]').doesNotExist();
         assert.dom('[data-test-pager="last"]').doesNotExist();
-        await percySnapshot(assert);
       });
       test('when there are fewer jobs than your page size setting', async function (assert) {
         localStorage.setItem('nomadPageSize', '10');
@@ -823,7 +809,6 @@ module('Acceptance | jobs list', function (hooks) {
         assert.dom('[data-test-pager="previous"]').isDisabled();
         assert.dom('[data-test-pager="next"]').isDisabled();
         assert.dom('[data-test-pager="last"]').isDisabled();
-        await percySnapshot(assert);
         localStorage.removeItem('nomadPageSize');
       });
       test('when you have plenty of jobs', async function (assert) {
@@ -849,7 +834,6 @@ module('Acceptance | jobs list', function (hooks) {
         assert.dom('[data-test-pager="previous"]').isNotDisabled();
         assert.dom('[data-test-pager="next"]').isDisabled();
         assert.dom('[data-test-pager="last"]').isDisabled();
-        await percySnapshot(assert);
         localStorage.removeItem('nomadPageSize');
       });
     });
@@ -1578,14 +1562,12 @@ module('Acceptance | jobs list', function (hooks) {
             'No jobs match your current filter selection: type == foo'
           );
         assert.dom('[data-test-filter-correction]').exists();
-        await percySnapshot(assert);
 
         await JobsList.search.fillIn('foo != bar');
         assert
           .dom('[data-test-empty-jobs-list]')
           .includesText('Did you mistype a key?');
         assert.dom('[data-test-filter-suggestion]').exists();
-        await percySnapshot('Filter suggestion for unknown key');
 
         await JobsList.search.fillIn('Name == surelyDoesntExist');
         assert
@@ -1594,7 +1576,6 @@ module('Acceptance | jobs list', function (hooks) {
             'No jobs match your current filter selection: Name == surelyDoesntExist'
           );
         assert.dom('[data-test-filter-random-suggestion]').exists();
-        await percySnapshot('Filter no results with random suggestion');
 
         localStorage.removeItem('nomadPageSize');
       });
@@ -1767,7 +1748,6 @@ module('Acceptance | jobs list', function (hooks) {
           ''; // clear
         await typeIn('[data-test-namespace-filter-searchbox]', 'n');
         assert.dom('[data-test-dropdown-option]').exists({ count: 4 });
-        await percySnapshot(assert);
       });
       test('Namespace filter only shows up if the server has more than one namespace', async function (assert) {
         localStorage.setItem('nomadPageSize', '10');

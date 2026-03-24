@@ -15,7 +15,6 @@ import moduleForJob, {
   moduleForJobWithClientStatus,
 } from 'nomad-ui/tests/helpers/module-for-job';
 import JobDetail from 'nomad-ui/tests/pages/jobs/detail';
-import percySnapshot from '@percy/ember';
 import { createRestartableJobs } from 'nomad-ui/mirage/scenarios/default';
 import faker from 'nomad-ui/mirage/faker';
 
@@ -405,33 +404,28 @@ module('Acceptance | ui block', function (hooks) {
     assert
       .dom('[data-test-job-links] a')
       .exists({ count: 2 }, 'Job links exists when defined in HCL');
-    await percySnapshot(assert, {
-      percyCSS: `
-        .allocation-row td { display: none; }
-      `,
-    });
+  });
+});
+
+test('job sanitizes input', async function (assert) {
+  server.create('node-pool');
+  server.create('node');
+  server.create('job', {
+    id: 'xss-job',
+    ui: {
+      Description: '<script>alert("XSS");</script><p>Safe text</p>',
+    },
   });
 
-  test('job sanitizes input', async function (assert) {
-    server.create('node-pool');
-    server.create('node');
-    server.create('job', {
-      id: 'xss-job',
-      ui: {
-        Description: '<script>alert("XSS");</script><p>Safe text</p>',
-      },
-    });
+  await JobDetail.visit({ id: 'xss-job' });
 
-    await JobDetail.visit({ id: 'xss-job' });
+  assert
+    .dom('[data-test-job-description]')
+    .hasText('Safe text', 'Description should only contain safe text');
 
-    assert
-      .dom('[data-test-job-description]')
-      .hasText('Safe text', 'Description should only contain safe text');
-
-    assert
-      .dom('[data-test-job-description] script')
-      .doesNotExist('Should not render script tags');
-  });
+  assert
+    .dom('[data-test-job-description] script')
+    .doesNotExist('Should not render script tags');
 });
 
 module('Acceptance | job detail (with namespaces)', function (hooks) {
@@ -772,8 +766,6 @@ module('Acceptance | job detail (with namespaces)', function (hooks) {
     assert
       .dom('.flash-message.alert-critical')
       .exists('A toast error message pops up.');
-
-    await percySnapshot(assert);
   });
 
   test('handles when a job is remotely purged, from a job subnav page', async function (assert) {
@@ -843,18 +835,12 @@ module('Job Start/Stop/Revert/Edit and Resubmit', function (hooks) {
     assert.notOk(JobDetail.stop.isPresent);
     assert.notOk(JobDetail.revert.isPresent);
     assert.notOk(JobDetail.editAndResubmit.isPresent);
-    await percySnapshot('Start Job depends on the job being stopped');
 
     await JobDetail.visit({ id: revertableJob.id });
     assert.notOk(JobDetail.start.isPresent);
 
-    await percySnapshot('Revertable Job depends on having stable job versions');
-
     await JobDetail.visit({ id: nonRevertableJob.id });
     assert.notOk(JobDetail.start.isPresent);
-    await percySnapshot(
-      'Non-revertable Job depends on having no stable job versions'
-    );
   });
 
   test('A revertable job depends on having stable job versions', async function (assert) {

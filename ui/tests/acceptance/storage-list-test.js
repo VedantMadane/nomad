@@ -10,7 +10,6 @@ import { setupApplicationTest } from 'ember-qunit';
 import { setupMirage } from 'ember-cli-mirage/test-support';
 import a11yAudit from 'nomad-ui/tests/helpers/a11y-audit';
 import StorageList from 'nomad-ui/tests/pages/storage/list';
-import percySnapshot from '@percy/ember';
 import faker from 'nomad-ui/mirage/faker';
 
 const assignWriteAlloc = (volume, alloc) => {
@@ -60,8 +59,6 @@ module('Acceptance | storage list', function (hooks) {
     server.createList('csi-volume', volumeCount);
 
     await StorageList.visit();
-
-    await percySnapshot(assert);
 
     const sortedVolumes = server.db.csiVolumes.sortBy('id');
 
@@ -128,8 +125,6 @@ module('Acceptance | storage list', function (hooks) {
 
   test('when there are no csi volumes, there is an empty message', async function (assert) {
     await StorageList.visit();
-
-    await percySnapshot(assert);
 
     assert.ok(StorageList.csiIsEmpty);
     assert.equal(StorageList.csiEmptyState, 'No CSI Volumes found');

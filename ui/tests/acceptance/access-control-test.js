@@ -11,7 +11,7 @@ import Administration from 'nomad-ui/tests/pages/administration';
 import Tokens from 'nomad-ui/tests/pages/settings/tokens';
 import { allScenarios } from '../../mirage/scenarios/default';
 import a11yAudit from 'nomad-ui/tests/helpers/a11y-audit';
-import percySnapshot from '@percy/ember';
+
 import faker from 'nomad-ui/mirage/faker';
 
 // Several related tests within Access Control are contained in the Tokens, Roles,
@@ -98,7 +98,7 @@ module('Acceptance | access control', function (hooks) {
     await Administration.visit();
 
     assert.dom('[data-test-sentinel-policies-card]').exists();
-    await percySnapshot(assert);
+
     await click('[data-test-sentinel-policies-card] a');
     assert.equal(currentURL(), '/administration/sentinel-policies');
   });

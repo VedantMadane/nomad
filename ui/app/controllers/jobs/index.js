@@ -691,7 +691,7 @@ export default class JobsIndexController extends Controller {
       'NodePool is not empty',
       '(dc1 in Datacenters) or (dc2 in Datacenters)',
     ];
-    // In test/Percy environments, pick deterministically so snapshots are stable.
+    // In test environments, pick deterministically so snapshots are stable.
     // In production, keep it random so users discover different filter syntax.
     if (Ember.testing) {
       const filter = this.filter || '';

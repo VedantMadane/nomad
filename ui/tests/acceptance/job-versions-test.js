@@ -13,7 +13,6 @@ import a11yAudit from 'nomad-ui/tests/helpers/a11y-audit';
 import Versions from 'nomad-ui/tests/pages/jobs/job/versions';
 import Layout from 'nomad-ui/tests/pages/layout';
 import moment from 'moment';
-import percySnapshot from '@percy/ember';
 import faker from 'nomad-ui/mirage/faker';
 let job;
 let namespace;
@@ -208,121 +207,93 @@ module('Acceptance | job versions', function (hooks) {
     assert
       .dom('[data-test-tagged-version="false"] .tag-description')
       .hasText('', 'Tag description is empty');
-
-    await percySnapshot(assert, {
-      percyCSS: `
-        .timeline-note {
-          display: none;
-        }
-        .submit-date {
-          visibility: hidden;
-        }
-      `,
-    });
   });
+});
 
-  test('existing version tags can be edited', async function (assert) {
-    // Clicking the tag button puts it into edit mode
-    assert
-      .dom('[data-test-tagged-version="true"] .boxed-section-foot')
-      .doesNotHaveClass('editing');
-    await click('[data-test-tagged-version="true"] .tag-button-primary');
-    assert
-      .dom('[data-test-tagged-version="true"] .boxed-section-foot')
-      .hasClass('editing');
+test('existing version tags can be edited', async function (assert) {
+  // Clicking the tag button puts it into edit mode
+  assert
+    .dom('[data-test-tagged-version="true"] .boxed-section-foot')
+    .doesNotHaveClass('editing');
+  await click('[data-test-tagged-version="true"] .tag-button-primary');
+  assert
+    .dom('[data-test-tagged-version="true"] .boxed-section-foot')
+    .hasClass('editing');
 
-    // equivalent of backspacing existing
-    document.querySelector('[data-test-tag-name-input]').value = '';
-    document.querySelector('[data-test-tag-description-input]').value = '';
+  // equivalent of backspacing existing
+  document.querySelector('[data-test-tag-name-input]').value = '';
+  document.querySelector('[data-test-tag-description-input]').value = '';
 
-    await typeIn(
-      '[data-test-tagged-version="true"] [data-test-tag-name-input]',
-      'new-tag'
-    );
-    await typeIn(
-      '[data-test-tagged-version="true"] [data-test-tag-description-input]',
-      'new-description'
-    );
+  await typeIn(
+    '[data-test-tagged-version="true"] [data-test-tag-name-input]',
+    'new-tag'
+  );
+  await typeIn(
+    '[data-test-tagged-version="true"] [data-test-tag-description-input]',
+    'new-description'
+  );
 
-    // Clicking the save button commits the changes
-    await click(
-      '[data-test-tagged-version="true"] [data-test-tag-save-button]'
-    );
-    assert
-      .dom('[data-test-tagged-version="true"] .tag-button-primary')
-      .hasText('new-tag');
-    assert
-      .dom('[data-test-tagged-version="true"] .tag-description')
-      .hasText('new-description');
+  // Clicking the save button commits the changes
+  await click('[data-test-tagged-version="true"] [data-test-tag-save-button]');
+  assert
+    .dom('[data-test-tagged-version="true"] .tag-button-primary')
+    .hasText('new-tag');
+  assert
+    .dom('[data-test-tagged-version="true"] .tag-description')
+    .hasText('new-description');
 
-    assert
-      .dom('.flash-message.alert.alert-success')
-      .exists('Shows a success toast notification on edit.');
+  assert
+    .dom('.flash-message.alert.alert-success')
+    .exists('Shows a success toast notification on edit.');
 
-    // Tag can subsequently be deleted
-    await click('[data-test-tagged-version="true"] .tag-button-primary');
-    await click(
-      '[data-test-tagged-version="true"] [data-test-tag-delete-button]'
-    );
-    assert.dom('[data-test-tagged-version="true"]').doesNotExist();
-  });
+  // Tag can subsequently be deleted
+  await click('[data-test-tagged-version="true"] .tag-button-primary');
+  await click(
+    '[data-test-tagged-version="true"] [data-test-tag-delete-button]'
+  );
+  assert.dom('[data-test-tagged-version="true"]').doesNotExist();
+});
 
-  test('new version tags can be created', async function (assert) {
-    // Clicking the tag button puts it into edit mode
-    assert
-      .dom('[data-test-tagged-version="false"] .boxed-section-foot')
-      .doesNotHaveClass('editing');
-    await click('[data-test-tagged-version="false"] .tag-button-secondary');
-    assert
-      .dom('[data-test-tagged-version="false"] .boxed-section-foot')
-      .hasClass('editing');
+test('new version tags can be created', async function (assert) {
+  // Clicking the tag button puts it into edit mode
+  assert
+    .dom('[data-test-tagged-version="false"] .boxed-section-foot')
+    .doesNotHaveClass('editing');
+  await click('[data-test-tagged-version="false"] .tag-button-secondary');
+  assert
+    .dom('[data-test-tagged-version="false"] .boxed-section-foot')
+    .hasClass('editing');
 
-    assert
-      .dom('[data-test-tagged-version="false"] [data-test-tag-delete-button]')
-      .doesNotExist();
+  assert
+    .dom('[data-test-tagged-version="false"] [data-test-tag-delete-button]')
+    .doesNotExist();
 
-    // Clicking the save button commits the changes
-    await click(
-      '[data-test-tagged-version="false"] [data-test-tag-save-button]'
-    );
+  // Clicking the save button commits the changes
+  await click('[data-test-tagged-version="false"] [data-test-tag-save-button]');
 
-    assert
-      .dom('.flash-message.alert.alert-critical')
-      .exists('Shows an error toast notification without a tag name.');
+  assert
+    .dom('.flash-message.alert.alert-critical')
+    .exists('Shows an error toast notification without a tag name.');
 
-    await typeIn(
-      '[data-test-tagged-version="false"] [data-test-tag-name-input]',
-      'new-tag'
-    );
-    await typeIn(
-      '[data-test-tagged-version="false"] [data-test-tag-description-input]',
-      'new-description'
-    );
+  await typeIn(
+    '[data-test-tagged-version="false"] [data-test-tag-name-input]',
+    'new-tag'
+  );
+  await typeIn(
+    '[data-test-tagged-version="false"] [data-test-tag-description-input]',
+    'new-description'
+  );
 
-    // Clicking the save button commits the changes
-    await click(
-      '[data-test-tagged-version="false"] [data-test-tag-save-button]'
-    );
+  // Clicking the save button commits the changes
+  await click('[data-test-tagged-version="false"] [data-test-tag-save-button]');
 
-    assert
-      .dom('[data-test-tagged-version="false"]')
-      .doesNotExist('Both versions now have tags');
+  assert
+    .dom('[data-test-tagged-version="false"]')
+    .doesNotExist('Both versions now have tags');
 
-    assert
-      .dom('.flash-message.alert.alert-success')
-      .exists('Shows a success toast notification on edit.');
-
-    await percySnapshot(assert, {
-      percyCSS: `
-        .timeline-note {
-          display: none;
-        }
-        .submit-date {
-          visibility: hidden;
-        }
-      `,
-    });
-  });
+  assert
+    .dom('.flash-message.alert.alert-success')
+    .exists('Shows a success toast notification on edit.');
 });
 
 // Module for Clone and Edit
@@ -429,8 +400,6 @@ module('Acceptance | job versions (clone and edit)', function (hooks) {
       `/jobs/${job.id}@${namespace.id}/definition?isEditing=true&version=98&view=job-spec`,
       'Taken to the definition page in edit mode'
     );
-
-    await percySnapshot(assert);
   });
 
   test('Clone as new version when version is 0', async function (assert) {
@@ -458,8 +427,6 @@ module('Acceptance | job versions (clone and edit)', function (hooks) {
     );
 
     assert.dom('[data-test-json-warning]').exists();
-
-    await percySnapshot(assert);
   });
 
   test('Clone as a new job', async function (assert) {
