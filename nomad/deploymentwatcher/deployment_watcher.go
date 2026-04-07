@@ -889,6 +889,7 @@ func (w *deploymentWatcher) getDeploymentStatusUpdate(status, desc string) *stru
 		DeploymentID:      w.deploymentID,
 		Status:            status,
 		StatusDescription: desc,
+		UpdatedAt:         time.Now().UTC().UnixNano(),
 	}
 }
 

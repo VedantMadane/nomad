@@ -1292,6 +1292,9 @@ type DeploymentStatusUpdateRequest struct {
 	// allocation health results in a deployment failure and the deployment
 	// auto-reverts to the latest stable job.
 	Job *Job
+
+	// UpdatedAt is used to set modified time on updated deployments
+	UpdatedAt int64
 }
 
 // DeploymentAllocHealthRequest is used to set the health of a set of
