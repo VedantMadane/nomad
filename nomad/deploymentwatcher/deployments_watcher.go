@@ -469,7 +469,6 @@ func (w *Watcher) upsertDeploymentStatusUpdate(
 		DeploymentUpdate: u,
 		Eval:             e,
 		Job:              j,
-		UpdatedAt:        u.UpdatedAt,
 	})
 }
 
